@@ -41,19 +41,18 @@ public final class AddressUtil {
    * @param ip the IP to parse
    * @return the parsed address
    */
-  public static InetSocketAddress parseAddress(String ip) {
+  public static InetSocketAddress parseAddress(String ip) { 
+    String host = ip.substring(0, ip.indexOf(":"));
+    int port = Integer.parseInt(ip.substring(ip.lastIndexOf(":") + 1));
     Preconditions.checkNotNull(ip, "ip");
-    URI uri = URI.create("tcp://" + ip);
-    if (uri.getHost() == null) {
-      throw new IllegalStateException("Invalid hostname/IP " + ip);
-    }
+    Preconditions.checkNotNull(port, "port");
+    Preconditions.checkNotNull(host, "host");
 
-    int port = uri.getPort() == -1 ? DEFAULT_MINECRAFT_PORT : uri.getPort();
     try {
-      InetAddress ia = InetAddresses.forUriString(uri.getHost());
+      InetAddress ia = InetAddresses.forUriString(host);
       return new InetSocketAddress(ia, port);
     } catch (IllegalArgumentException e) {
-      return InetSocketAddress.createUnresolved(uri.getHost(), port);
+      return InetSocketAddress.createUnresolved(host, port);
     }
   }
 
